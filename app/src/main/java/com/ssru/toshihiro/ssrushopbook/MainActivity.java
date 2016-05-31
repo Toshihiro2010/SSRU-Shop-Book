@@ -1,6 +1,7 @@
 package com.ssru.toshihiro.ssrushopbook;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -22,8 +24,9 @@ public class MainActivity extends AppCompatActivity {
     private Mymanage mymanage;
     private static final String urlJSON = "http://swiftcodingthai.com/ssru/get_user_toshihiro.php";
 
-    private EditText userEditText , passwordEditText;
-    private String userString , passwordString;
+    private EditText userEditText, passwordEditText;
+    private String userString, passwordString;
+    private String[] loginString;
 
 
     @Override
@@ -34,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         // Bind Widget
         userEditText = (EditText) findViewById(R.id.editText5);
         passwordEditText = (EditText) findViewById(R.id.editText6);
-
 
 
         mymanage = new Mymanage(MainActivity.this);
@@ -59,13 +61,57 @@ public class MainActivity extends AppCompatActivity {
         if (userString.equals("") || passwordString.equals("")) {
 
             Myalert myalert = new Myalert();
-            myalert.myDialog(this, "มีช่องว่างเห้ย มั่ววะ" , "กรอกทุกช่องสิฟะ");
+            myalert.myDialog(this, "มีช่องว่างเห้ย มั่ววะ", "กรอกทุกช่องสิฟะ");
 
 
+        } else {
+            checkUserAndPassword();
         }
 
     }// clickSigIn
 
+    private void checkUserAndPassword() {
+
+        try {
+            SQLiteDatabase sqLiteDatabase = openOrCreateDatabase(MyOpenHelper.database_name , MODE_PRIVATE , null);
+
+            Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM userTABLE WHERE User = " + "'" + userString + "'", null);
+            cursor.moveToFirst();
+
+            loginString = new String[cursor.getColumnCount()];
+
+            for (int i = 0 ; i < cursor.getColumnCount();i++) {
+
+                loginString[i] = cursor.getString(i);
+
+
+
+            }//for
+            cursor.close();
+
+            //Check Password
+
+            if (passwordString.equals(loginString[4])) {
+                //Password True
+                Toast.makeText(this , "ยินดีต้อนรบ " + loginString[1] + " " + loginString[2] , Toast.LENGTH_SHORT).show();
+
+
+            } else {    // Fail Password
+                Myalert myalert = new Myalert();
+                myalert.myDialog(this , "Password False " , "Password ไม่ถูกโว้ยยยย");
+
+
+            }
+
+
+        } catch (Exception e) {
+
+            Myalert myalert = new Myalert();
+            myalert.myDialog(this , "ไม่มี User นี้" , "ไม่มี " + userString + " ในฐานข้อมูลของเรา ");
+
+        }
+
+    }//check
 
 
     private void synJSONtoSQLite() {

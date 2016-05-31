@@ -5,6 +5,6 @@
     <string name="name">ชื่อ</string>
     <string name="sur">นามสกุล</string>
     <string name="user">User : </string>
-    <string name="pass">Password : </string>
+    <string name="pass">Password: </string>
     <string name="promote">สมัครวันนี้ ได้แต้ม ฟรี 500</string>
 </resources>

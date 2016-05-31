@@ -23,7 +23,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private String nameString, surnameString , userString , passString;
 
-    private static final String urlUpload ="http://swiftcodingthai.com/ssru/add_user_toshihiro.php";
+    private static final String urlUpload ="http://swiftcodingthai.com/ssru/add_user_master.php";
 
 
     @Override
@@ -69,7 +69,7 @@ public class SignUpActivity extends AppCompatActivity {
         RequestBody requestBody = new FormEncodingBuilder().add("isAdd", "true")
                 .add("Name", nameString).add("Surname", surnameString).add("User", userString).add("Password", passString).build();
         Request.Builder builder = new Request.Builder();
-        Request request = builder.url("http://swiftcodingthai.com/ssru/add_user_toshihiro.php").post(requestBody).build();
+        Request request = builder.url(urlUpload).post(requestBody).build();
         Call call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {
             @Override

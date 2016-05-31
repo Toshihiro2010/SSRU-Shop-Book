@@ -58,7 +58,9 @@ public class MainActivity extends AppCompatActivity {
 
         deleteAlluserTABLE();
         synJSONtoSQLite();
-    }
+
+
+    }//onRestart
 
     public void clickSignIn(View view) {
 

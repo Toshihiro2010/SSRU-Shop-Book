@@ -83,17 +83,16 @@ public class MainActivity extends AppCompatActivity {
     private void checkUserAndPassword() {
 
         try {
-            SQLiteDatabase sqLiteDatabase = openOrCreateDatabase(MyOpenHelper.database_name , MODE_PRIVATE , null);
+            SQLiteDatabase sqLiteDatabase = openOrCreateDatabase(MyOpenHelper.database_name, MODE_PRIVATE, null);
 
             Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM userTABLE WHERE User = " + "'" + userString + "'", null);
             cursor.moveToFirst();
 
             loginString = new String[cursor.getColumnCount()];
 
-            for (int i = 0 ; i < cursor.getColumnCount();i++) {
+            for (int i = 0; i < cursor.getColumnCount(); i++) {
 
                 loginString[i] = cursor.getString(i);
-
 
 
             }//for
@@ -103,12 +102,22 @@ public class MainActivity extends AppCompatActivity {
 
             if (passwordString.equals(loginString[4])) {
                 //Password True
-                Toast.makeText(this , "ยินดีต้อนรบ " + loginString[1] + " " + loginString[2] , Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, ProductListViewActivity.class);
+                intent.putExtra("Login ", loginString);
+
+                startActivity(intent);
+
+
+                Toast.makeText(this, "ยินดีต้อนรบ " + loginString[1] + " " + loginString[2], Toast.LENGTH_SHORT).show();
+
+
+                finish();
+
 
 
             } else {    // Fail Password
                 Myalert myalert = new Myalert();
-                myalert.myDialog(this , "Password False " , "Password ไม่ถูกโว้ยยยย");
+                myalert.myDialog(this, "Password False ", "Password ไม่ถูกโว้ยยยย");
 
 
             }
@@ -117,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
 
             Myalert myalert = new Myalert();
-            myalert.myDialog(this , "ไม่มี User นี้" , "ไม่มี " + userString + " ในฐานข้อมูลของเรา ");
+            myalert.myDialog(this, "ไม่มี User นี้", "ไม่มี " + userString + " ในฐานข้อมูลของเรา ");
 
         }
 

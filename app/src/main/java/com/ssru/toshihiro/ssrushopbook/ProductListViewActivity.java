@@ -1,9 +1,20 @@
 package com.ssru.toshihiro.ssrushopbook;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class ProductListViewActivity extends AppCompatActivity {
 
@@ -12,7 +23,10 @@ public class ProductListViewActivity extends AppCompatActivity {
     private TextView nameTextView , surnameTextView , moneyTextView;
     private ListView listView;
 
-    private String[] loginString;
+    private String[] loginString , nameStrings , priceStrings , coverStrings , eBookStrings;
+
+    private String urlJSON = "http://swiftcodingthai.com/ssru/get_product.php";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +48,106 @@ public class ProductListViewActivity extends AppCompatActivity {
         surnameTextView.setText(loginString[2]);
         moneyTextView.setText(loginString[5] + " THB.");
 
+        SynChronizeProduct synChronizeProduct = new SynChronizeProduct(this, urlJSON);
+        synChronizeProduct.execute();
+
 
     }//Main Method
+
+    private class SynChronizeProduct extends AsyncTask<Void, Void, String> {
+
+        private Context context;
+        private String urlString;
+        private ProgressDialog progressDialog;
+
+        public SynChronizeProduct(Context context, String urlString) {
+            this.context = context;
+            this.urlString = urlString;
+
+
+        }//Constructor
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progressDialog = ProgressDialog.show(context, "Load Product", "Load Product Process ...");
+
+
+
+        }   //   onPre
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            try {
+                OkHttpClient okHttpClient = new OkHttpClient();
+                Request.Builder builder = new Request.Builder();
+                Request request = builder.url(urlString).build();
+                Response response = okHttpClient.newCall(request).execute();
+
+                return response.body().string();
+
+
+            } catch (Exception e) {
+                Log.d("1JuneV1", "doIn e ==> " + e.toString());
+                return null;
+            }
+
+
+
+
+        }// doInback
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            if (s.length() != 0) {
+
+                progressDialog.dismiss();
+                Log.d("1JuneV1", "s ==> " + s);
+
+
+
+            }
+
+            try {
+
+                JSONArray jsonArray = new JSONArray(s);
+
+                nameStrings = new String[jsonArray.length()];
+                priceStrings = new String[jsonArray.length()];
+                coverStrings = new String[jsonArray.length()];
+                eBookStrings = new String[jsonArray.length()];
+
+                for (int i = 0 ; i<jsonArray.length() ; i ++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                    nameStrings[i] = jsonObject.getString("Name");
+                    priceStrings[i] = jsonObject.getString("Price");
+                    coverStrings[i] = jsonObject.getString("Cover");
+                    eBookStrings[i] = jsonObject.getString("Ebook");
+
+
+                }
+
+                MyAdapter myAdapter = new MyAdapter(context, nameStrings, priceStrings, coverStrings);
+
+                listView.setAdapter(myAdapter);
+
+
+            } catch (Exception e) {
+                Log.d("1JuneV2", "onPlost e ==>" + e.toString());
+            }
+
+
+
+        }// OnPost
+
+
+    }//SynChronize
+
 
 
 }// Main Class

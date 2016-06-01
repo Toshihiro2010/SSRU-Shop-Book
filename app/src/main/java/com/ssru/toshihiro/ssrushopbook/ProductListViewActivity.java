@@ -1,7 +1,9 @@
 package com.ssru.toshihiro.ssrushopbook;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,10 +24,10 @@ public class ProductListViewActivity extends AppCompatActivity {
 
 
     //Explicit
-    private TextView nameTextView , surnameTextView , moneyTextView;
+    private TextView nameTextView, surnameTextView, moneyTextView;
     private ListView listView;
 
-    private String[] loginString , nameStrings , priceStrings , coverStrings , eBookStrings;
+    private String[] loginString, nameStrings, priceStrings, coverStrings, eBookStrings;
 
     private String urlJSON = "http://swiftcodingthai.com/ssru/get_product.php";
 
@@ -76,7 +78,6 @@ public class ProductListViewActivity extends AppCompatActivity {
             progressDialog = ProgressDialog.show(context, "Load Product", "Load Product Process ...");
 
 
-
         }   //   onPre
 
         @Override
@@ -97,8 +98,6 @@ public class ProductListViewActivity extends AppCompatActivity {
             }
 
 
-
-
         }// doInback
 
         @Override
@@ -109,7 +108,6 @@ public class ProductListViewActivity extends AppCompatActivity {
 
                 progressDialog.dismiss();
                 Log.d("1JuneV1", "s ==> " + s);
-
 
 
             }
@@ -123,7 +121,7 @@ public class ProductListViewActivity extends AppCompatActivity {
                 coverStrings = new String[jsonArray.length()];
                 eBookStrings = new String[jsonArray.length()];
 
-                for (int i = 0 ; i<jsonArray.length() ; i ++) {
+                for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
 
                     nameStrings[i] = jsonObject.getString("Name");
@@ -144,11 +142,11 @@ public class ProductListViewActivity extends AppCompatActivity {
 
                         if (checkMoney(priceStrings[position])) {
 
-                            confirmDialog(nameStrings[position] , priceStrings[position]);
+                            confirmDialog(nameStrings[position], priceStrings[position]);
 
                         } else {
                             Myalert myalert = new Myalert();
-                            myalert.myDialog(context , "เงินไม่พอ" , "ไปเติมเงินเพิ่ม หรือ ซื้อเล่มอื่นสิวะ");
+                            myalert.myDialog(context, "เงินไม่พอ", "ไปเติมเงินเพิ่ม หรือ ซื้อเล่มอื่นสิวะ");
 
 
                         }
@@ -160,7 +158,6 @@ public class ProductListViewActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.d("1JuneV2", "onPlost e ==>" + e.toString());
             }
-
 
 
         }// OnPost
@@ -182,7 +179,29 @@ public class ProductListViewActivity extends AppCompatActivity {
 
     private void confirmDialog(String nameString, String priceString) {
 
-    }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setIcon(R.drawable.icon_myaccount);
+        builder.setCancelable(false);
+        builder.setTitle("Confirm Order");
+        builder.setMessage(nameString + " ราคา " + priceString + " THB." + "\n" + " คุณต้องการหนังสือเล่มนี้ใช่ หรือ ไม่");
+        builder.setNegativeButton("ไม่", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.setPositiveButton("รับ Order", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+            }
+        });
+        builder.show();
+
+
+    }// Confirm
 
 
 }// Main Class

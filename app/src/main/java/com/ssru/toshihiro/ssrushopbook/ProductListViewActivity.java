@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -142,7 +143,7 @@ public class ProductListViewActivity extends AppCompatActivity {
 
                         if (checkMoney(priceStrings[position])) {
 
-                            confirmDialog(nameStrings[position], priceStrings[position]);
+                            confirmDialog(nameStrings[position], priceStrings[position] , eBookStrings[position]);
 
                         } else {
                             Myalert myalert = new Myalert();
@@ -177,12 +178,14 @@ public class ProductListViewActivity extends AppCompatActivity {
 
     }//SynChronize
 
-    private void confirmDialog(String nameString, String priceString) {
+    private void confirmDialog(final String nameString, final String priceString , final String eBookString) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setIcon(R.drawable.icon_myaccount);
         builder.setCancelable(false);
         builder.setTitle("Confirm Order");
+
+
         builder.setMessage(nameString + " ราคา " + priceString + " THB." + "\n" + " คุณต้องการหนังสือเล่มนี้ใช่ หรือ ไม่");
         builder.setNegativeButton("ไม่", new DialogInterface.OnClickListener() {
             @Override
@@ -194,6 +197,14 @@ public class ProductListViewActivity extends AppCompatActivity {
         builder.setPositiveButton("รับ Order", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
+                Intent intent = new Intent(ProductListViewActivity.this, ReadPDFActivity.class);
+                intent.putExtra("Login ", loginString);
+                intent.putExtra("NameBook", nameString);
+                intent.putExtra("PriceBook", priceString);
+                intent.putExtra("urlEbook", eBookString);
+                startActivity(intent);
+
                 dialog.dismiss();
 
             }
